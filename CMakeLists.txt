@@ -12,3 +12,4 @@ include(cmake/FindBenchmark.cmake)
 enable_testing()
 
 add_subdirectory(network/)
+add_subdirectory(concurrency/)

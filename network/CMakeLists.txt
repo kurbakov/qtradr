@@ -8,7 +8,7 @@ add_library(network STATIC
 target_include_directories(network PUBLIC inc/)
 
 include_directories(
-        inc/
+    inc/
 )
 
 # Tests
