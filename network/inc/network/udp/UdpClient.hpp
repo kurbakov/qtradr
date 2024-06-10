@@ -21,15 +21,15 @@ public:
     int init();
 
     /**
-     * @brief try_connect
+     * @brief try_connect_to_ip
      *
-     * Connect to the given host and port
+     * Connect to the given IPv4 and port
      *
-     * @param host - IP address to connect
+     * @param ip - IPv4 address to connect
      * @param port - port to connect
      * @return -1 on error 0 is success
      */
-    int try_connect(std::string_view host, int port);
+    int try_connect_to_ip4(std::string_view ip, int port);
 
     /**
      * @brief disconnect

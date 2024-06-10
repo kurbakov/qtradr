@@ -2,7 +2,7 @@
 
 #include "network/udp/UdpServer.hpp"
 
-static void BM_ServerInitDeinit(benchmark::State& state) {
+static void BM_UdpServerInitDeinit(benchmark::State& state) {
     network::UDPServer server(98981);
 
     for (auto _ : state)
@@ -11,6 +11,6 @@ static void BM_ServerInitDeinit(benchmark::State& state) {
         server.deinit();
     }
 }
-BENCHMARK(BM_ServerInitDeinit);
+BENCHMARK(BM_UdpServerInitDeinit);
 
 BENCHMARK_MAIN();

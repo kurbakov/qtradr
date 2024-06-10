@@ -1,5 +1,5 @@
-#include "network/udp/UdpServer.hpp"
-#include "network/udp/UdpClient.hpp"
+#include "network/tcp/TcpServer.hpp"
+#include "network/tcp/TcpClient.hpp"
 
 #include <thread>
 #include <sys/socket.h>
@@ -10,9 +10,9 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-TEST(UDP, InitServer)
+TEST(TCP, InitServer)
 {
-    network::UDPServer server(98989);
+    network::TCPServer server(98989);
     EXPECT_EQ(0, server.init());
 
     // once server is initialized, it should fail on repetative init call
@@ -20,9 +20,9 @@ TEST(UDP, InitServer)
     server.deinit();
 }
 
-TEST(UDP, DeinitServer)
+TEST(TCP, DeinitServer)
 {
-    network::UDPServer server(98989);
+    network::TCPServer server(98989);
 
     // we should not fail on deinit before we initialize
     EXPECT_EQ(0, server.deinit());
@@ -32,18 +32,18 @@ TEST(UDP, DeinitServer)
     EXPECT_EQ(0, server.deinit());
 }
 
-TEST(UDP, InitClient)
+TEST(TCP, InitClient)
 {
-    network::UDPClient client;
+    network::TCPClient client;
     EXPECT_EQ(0, client.init());
 
     // once server is initialized, it should fail on repetative init call
     EXPECT_EQ(-1, client.init());
 }
 
-TEST(UDP, ClientDisconnect)
+TEST(TCP, ClientDisconnect)
 {
-    network::UDPClient client;
+    network::TCPClient client;
 
     // we should not fail on deinit before we initialize
     EXPECT_EQ(0, client.disconnect());
@@ -53,17 +53,19 @@ TEST(UDP, ClientDisconnect)
     EXPECT_EQ(0, client.disconnect());
 }
 
-TEST(UDP, SendRecieve)
+TEST(TCP, SendRecieve)
 {
     // echo server
     std::thread server([](){
         sockaddr_in client_addr;
         char buffer[100];
 
-        network::UDPServer server(98989);
+        network::TCPServer server(98989);
         server.init();
-        int rc = server.recv_data(buffer, 100, client_addr);
-        server.send_data(buffer, rc, client_addr);
+
+        int client_fd = server.accept(client_addr);
+        int rc = server.recv_data(client_fd, buffer, 100);
+        server.send_data(client_fd, buffer, rc);
     });
 
     // give some time to start the server
@@ -74,7 +76,7 @@ TEST(UDP, SendRecieve)
         char buffer[100];
         std::string_view message{"Hello Server"};
 
-        network::UDPClient client;
+        network::TCPClient client;
         client.init();
         client.try_connect_to_ip4("127.0.0.1", 98989);
         client.send_data(message.data(), message.length());

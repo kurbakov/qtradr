@@ -14,8 +14,18 @@ include_directories(
 # Tests
 
 # Benchmark
-add_executable(udp_bt test/udp.bt.cpp)
+add_executable(udp_bt
+    test/udp.bt.cpp
+)
 target_link_libraries(udp_bt PRIVATE
+    benchmark::benchmark
+    network
+)
+
+add_executable(tcp_bt
+    test/tcp.bt.cpp
+)
+target_link_libraries(tcp_bt PRIVATE
     benchmark::benchmark
     network
 )
@@ -23,11 +33,12 @@ target_link_libraries(udp_bt PRIVATE
 
 # Unit tests
 add_executable(network_ut
-        test/udp.ut.cpp
+    test/tcp.ut.cpp
+    test/udp.ut.cpp
 )
 target_link_libraries(network_ut PRIVATE
-        GTest::gtest_main
-        network
+    GTest::gtest_main
+    network
 )
 
 include(GoogleTest)

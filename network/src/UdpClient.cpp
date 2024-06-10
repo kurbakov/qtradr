@@ -28,7 +28,7 @@ namespace network
             return -1;
         }
 
-        _fd = socket(AF_INET, SOCK_DGRAM, 0);
+        _fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
         if (-1 == _fd)
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Failed to create socket" << std::endl;
@@ -39,7 +39,7 @@ namespace network
         return 0;
     }
 
-    int UDPClient::try_connect(std::string_view host, int port)
+    int UDPClient::try_connect_to_ip4(std::string_view ip, int port)
     {
         if (-1 == _fd)
         {
@@ -49,7 +49,7 @@ namespace network
 
         sockaddr_in server_addr;
         bzero(&server_addr, sizeof(server_addr));
-        server_addr.sin_addr.s_addr = inet_addr(host.data());
+        server_addr.sin_addr.s_addr = inet_addr(ip.data());
         server_addr.sin_port = htons(port);
         server_addr.sin_family = AF_INET;
 
