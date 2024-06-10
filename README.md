@@ -6,8 +6,8 @@ Collection of libs and tools for low latency applications
 
 - [ ] Network
 
-  - [ ] UDP Server/Client
-  - [ ] TCP Server/Client
+  - [x] [UDP](./network/inc/network/udp/README.md) Server/Client
+  - [x] [TCP](./network/inc/network/tcp/README.md) Server/Client
   - [ ] multicast
   - [ ] broadcast
   - [ ] HTTP Client
@@ -26,7 +26,7 @@ Collection of libs and tools for low latency applications
 
   - [ ] Lock free queue (SPSC, MPSC, SPMC)
   - [ ] Lock free stack
-  - [ ] Spinlock
+  - [x] [Spinlock](./concurrency/inc/concurrency/Spinlock.hpp)
   - [ ] POSIX Thread pool with affinity
 
 - [ ] [Memory](https://en.wikipedia.org/wiki/Memory_management)

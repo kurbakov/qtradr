@@ -32,7 +32,7 @@ UDP overhead: 64 bites.
 
 ### Example: UDP message
 
-![UDP package](../../../../img//wireshark-udp.png)
+![UDP package](../../../../.img//wireshark-udp.png)
 
 
 ### UDP properties

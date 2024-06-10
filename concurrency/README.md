@@ -11,7 +11,7 @@ std::mutex will execute a system call `pthread_mutex_lock` that is a part of [pt
 
 Inctruction genereted by GCC:
 
-![Mutex instruction example](../img/mutex.png)
+![Mutex instruction example](../.img/mutex.png)
 
 ### LockGuard
 
