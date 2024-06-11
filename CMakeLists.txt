@@ -13,3 +13,4 @@ enable_testing()
 
 add_subdirectory(network/)
 add_subdirectory(concurrency/)
+add_subdirectory(multiplexing/)

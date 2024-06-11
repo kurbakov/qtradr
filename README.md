@@ -17,10 +17,9 @@ Collection of libs and tools for low latency applications
 
 - [ ] Multiplexing
 
-  - [ ] select
-  - [ ] poll
-  - [ ] epoll
-  - [ ] io_uring
+  - [ ] [select vs. poll vs. epoll](./multiplexing/README.md)
+  - [ ] epoll class
+  - [ ] io_uring class
 
 - [ ] Concurrency
 
