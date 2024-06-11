@@ -2,9 +2,29 @@
 
 Collection of libs and tools for low latency applications
 
+## About
+
+This repo is a mix of documentation and implementation.
+
+It is a cmake project with dependencies defined in [.cmake](./.cmake/)
+
+
+To build the project:
+
+```bash
+cd qtradr
+mkdir .build-release && cd .build-release
+cmake .. && make -j8
+ctest .
+```
+
+We also have benchmark tests, build and run it based on the need.
+All benchmark tests in the repo have `*.bt.cpp` extension.
+
+
 ## Plan for coding
 
-- [ ] Network
+- [ ] [Network](./network/README.md)
 
   - [x] [UDP](./network/inc/network/udp/README.md) Server/Client
   - [x] [TCP](./network/inc/network/tcp/README.md) Server/Client
@@ -15,20 +35,20 @@ Collection of libs and tools for low latency applications
   - [ ] RestAPI Client
   - [ ] Tls (OpenSSL)
 
-- [ ] Multiplexing
+- [ ] [Multiplexing](./multiplexing/README.md)
 
   - [ ] [select vs. poll vs. epoll](./multiplexing/README.md)
-  - [ ] epoll class
+  - [x] [epoll class](./multiplexing/inc/multiplexing/EPoll.hpp)
   - [ ] io_uring class
 
-- [ ] Concurrency
+- [ ] [Concurrency](./concurrency/REAME.md)
 
+  - [x] [Spinlock](./concurrency/inc/concurrency/Spinlock.hpp)
   - [ ] Lock free queue (SPSC, MPSC, SPMC)
   - [ ] Lock free stack
-  - [x] [Spinlock](./concurrency/inc/concurrency/Spinlock.hpp)
   - [ ] POSIX Thread pool with affinity
 
-- [ ] [Memory](https://en.wikipedia.org/wiki/Memory_management)
+- [ ] [Memory](./memory/REAME.md)
 
   - [ ] arena allocator
   - [ ] stack allocator
@@ -66,6 +86,12 @@ Collection of libs and tools for low latency applications
 - [ ] Logger
 
   - [ ] low latency logger
+
+- [ ] Trading
+
+  - [ ] OrderBook
+  - [ ] Exchange protocol
+    - [ ] Coinbase
 
 ## Useful links
 

@@ -46,7 +46,6 @@ used either as an edge-triggered or a level-triggered interface
 and scales well to large numbers of watched file descriptors.
 
 
-
 ### epoll_create() vs epoll_create1()
 
 ### epoll_wait() vs epoll_pwait() vs epoll_pwait2()

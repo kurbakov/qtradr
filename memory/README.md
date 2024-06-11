@@ -1,5 +1,8 @@
 # Mempory management
 
+## Atricles
+- [Wiki: Memory management](https://en.wikipedia.org/wiki/Memory_management)
+
 ## Videos and conferences
 - [CppCon: What Programmers Should Know About Memory Allocation](https://www.youtube.com/watch?v=gYfd25Bdmws)
 - [CppCon: Allocators: The Good Parts](https://www.youtube.com/watch?v=v3dz-AKOVL8)
