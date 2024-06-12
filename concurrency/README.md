@@ -13,14 +13,36 @@ Inctruction genereted by GCC:
 
 ![Mutex instruction example](../.img/mutex.png)
 
+### Mutex vs Futex
+
+[futex](https://www.man7.org/linux/man-pages/man2/futex.2.html) - fast user-space locking. Compared to `std::mutex`, in `futex` the majority of the
+synchronization operations are performed in user space.
+
+`futex` is not part of C++ standard as of c++23. `futex` is available on linux sinse 2.6.0 and can be add with the following include:
+
+```c
+#include <linux/futex.h>
+```
+
+Example of the `futex` usage can be found [here](https://www.man7.org/linux/man-pages/man2/futex.2.html).
+
+Also if you want to know more about futex, visit [Eli Bendersky: Basics of Futexes](https://eli.thegreenplace.net/2018/basics-of-futexes/)
+> **Note**: In [pthreads NPTL](https://www.man7.org/linux/man-pages/man7/pthreads.7.html)
+thread synchronization primitives (mutexes, thread joining, and
+so on) are implemented using the Linux `futex` system call. 
+
 ### LockGuard
 
+ToDo!
 
 ## Loock free structures
+
+ToDo!
 
 
 ## Wait free structures
 
+ToDo!
 
 ## Atomic and memory order
 
