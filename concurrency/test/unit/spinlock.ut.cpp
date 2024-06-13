@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "concurrency/Spinlock.hpp"
+#include "concurrency/spinlock.hpp"
 
 TEST(Spimlock, LockUnlock)
 {

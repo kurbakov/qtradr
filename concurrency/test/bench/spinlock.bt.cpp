@@ -2,7 +2,7 @@
 
 #include <thread>
 
-#include "concurrency/Spinlock.hpp"
+#include "concurrency/spinlock.hpp"
 
 static void BM_Spinlock_v1(benchmark::State& state) {
     concurrency::SpinLock sl;
@@ -53,6 +53,3 @@ static void BM_Spinlock_v2(benchmark::State& state) {
 }
 
 BENCHMARK(BM_Spinlock_v2);
-
-
-BENCHMARK_MAIN();

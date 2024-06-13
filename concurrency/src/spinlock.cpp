@@ -1,4 +1,4 @@
-#include "concurrency/Spinlock.hpp"
+#include "concurrency/spinlock.hpp"
 
 #include <time.h>
 
