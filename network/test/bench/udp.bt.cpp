@@ -1,9 +1,9 @@
 #include <benchmark/benchmark.h>
 
-#include "network/udp/UdpServer.hpp"
+#include "network/udp/server.hpp"
 
 static void BM_UdpServerInitDeinit(benchmark::State& state) {
-    network::UDPServer server(98981);
+    network::udp::UDPServer server(98981);
 
     for (auto _ : state)
     {
@@ -12,5 +12,3 @@ static void BM_UdpServerInitDeinit(benchmark::State& state) {
     }
 }
 BENCHMARK(BM_UdpServerInitDeinit);
-
-BENCHMARK_MAIN();

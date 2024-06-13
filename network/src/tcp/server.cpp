@@ -1,4 +1,4 @@
-#include "network/tcp/TcpServer.hpp"
+#include "network/tcp/server.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 
-namespace network
+namespace network::tcp
 {
 
 TCPServer::TCPServer(int port) : _port(port), _fd(-1) {}
@@ -160,4 +160,4 @@ int TCPServer::send_data(int client_fd, const char *msg, size_t len)
     return completed;
 }
 
-} // ns network
+} // ns network::tcp

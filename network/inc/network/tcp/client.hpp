@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 
-namespace network
+namespace network::tcp
 {
     class TCPClient
     {
@@ -84,4 +84,4 @@ namespace network
     private:
         int _fd;
     };
-} // ns network
+} // ns network::tcp

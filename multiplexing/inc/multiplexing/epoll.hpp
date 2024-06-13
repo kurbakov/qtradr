@@ -7,7 +7,8 @@
 #include <cstring>
 #include <cstddef>
 
-namespace multiplexing {
+namespace multiplexing
+{
 
 template <typename Socket>
 concept EpollSocket = requires(Socket sock, int fd, char* buffer, size_t len)

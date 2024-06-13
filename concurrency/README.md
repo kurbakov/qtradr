@@ -1,4 +1,4 @@
-# Concurrencly
+# Concurrency
 
 ## Thread safety
 
@@ -89,5 +89,7 @@ A load operation with this memory order performs an acquire operation, a store p
 
 ## Ring buffer approach
 
+[DPDK Ring Library](https://doc.dpdk.org/guides-19.05/prog_guide/ring_lib.html)
+[A lockless ring-buffer](https://lwn.net/Articles/340400/)
 
 ## Compare and swap

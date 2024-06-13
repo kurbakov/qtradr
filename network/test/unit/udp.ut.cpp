@@ -1,5 +1,5 @@
-#include "network/udp/UdpServer.hpp"
-#include "network/udp/UdpClient.hpp"
+#include "network/udp/server.hpp"
+#include "network/udp/client.hpp"
 
 #include <thread>
 #include <sys/socket.h>
@@ -12,7 +12,7 @@
 
 TEST(UDP, InitServer)
 {
-    network::UDPServer server(98989);
+    network::udp::UDPServer server(98989);
     EXPECT_EQ(0, server.init());
 
     // once server is initialized, it should fail on repetative init call
@@ -22,7 +22,7 @@ TEST(UDP, InitServer)
 
 TEST(UDP, DeinitServer)
 {
-    network::UDPServer server(98989);
+    network::udp::UDPServer server(98989);
 
     // we should not fail on deinit before we initialize
     EXPECT_EQ(0, server.deinit());
@@ -34,7 +34,7 @@ TEST(UDP, DeinitServer)
 
 TEST(UDP, InitClient)
 {
-    network::UDPClient client;
+    network::udp::UDPClient client;
     EXPECT_EQ(0, client.init());
 
     // once server is initialized, it should fail on repetative init call
@@ -43,7 +43,7 @@ TEST(UDP, InitClient)
 
 TEST(UDP, ClientDisconnect)
 {
-    network::UDPClient client;
+    network::udp::UDPClient client;
 
     // we should not fail on deinit before we initialize
     EXPECT_EQ(0, client.disconnect());
@@ -60,7 +60,7 @@ TEST(UDP, SendRecieve)
         sockaddr_in client_addr;
         char buffer[100];
 
-        network::UDPServer server(98989);
+        network::udp::UDPServer server(98989);
         server.init();
         int rc = server.recv_data(buffer, 100, client_addr);
         server.send_data(buffer, rc, client_addr);
@@ -74,7 +74,7 @@ TEST(UDP, SendRecieve)
         char buffer[100];
         std::string_view message{"Hello Server"};
 
-        network::UDPClient client;
+        network::udp::UDPClient client;
         client.init();
         client.try_connect_to_ip4("127.0.0.1", 98989);
         client.send_data(message.data(), message.length());

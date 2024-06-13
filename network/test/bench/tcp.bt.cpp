@@ -1,9 +1,9 @@
 #include <benchmark/benchmark.h>
 
-#include "network/tcp/TcpServer.hpp"
+#include "network/tcp/server.hpp"
 
 static void BM_TcpServerInitDeinit(benchmark::State& state) {
-    network::TCPServer server(98981);
+    network::tcp::TCPServer server(98981);
 
     for (auto _ : state)
     {
@@ -12,5 +12,3 @@ static void BM_TcpServerInitDeinit(benchmark::State& state) {
     }
 }
 BENCHMARK(BM_TcpServerInitDeinit);
-
-BENCHMARK_MAIN();

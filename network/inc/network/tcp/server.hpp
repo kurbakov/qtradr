@@ -4,7 +4,7 @@
 
 struct sockaddr_in;
 
-namespace network
+namespace network::tcp
 {
     class TCPServer
     {
@@ -67,4 +67,4 @@ namespace network
         const int _port;
         int _fd;
     };
-} // ns network
+} // ns network::tcp

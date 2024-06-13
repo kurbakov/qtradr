@@ -1,4 +1,4 @@
-#include "network/udp/UdpServer.hpp"
+#include "network/udp/server.hpp"
 
 #include <cerrno>
 #include <cstring>
@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 
 
-namespace network
+namespace network::udp
 {
     UDPServer::UDPServer(int port) : _fd(-1), _port(port)
     {
@@ -140,4 +140,4 @@ namespace network
         return completed;
     }
 
-} // ns network
+} // ns network::udp

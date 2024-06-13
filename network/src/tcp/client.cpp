@@ -1,6 +1,6 @@
-#include "network/tcp/TcpClient.hpp"
+#include "network/tcp/client.hpp"
 
-namespace network
+namespace network::tcp
 {
 
 TCPClient::TCPClient() : _fd(-1) {}
@@ -112,4 +112,4 @@ int TCPClient::recv_data(char *buffer, size_t len)
     return recvfrom(_fd, buffer, len, 0, (struct sockaddr *)NULL, NULL);
 }
 
-} // ns network
+} // ns network::tcp

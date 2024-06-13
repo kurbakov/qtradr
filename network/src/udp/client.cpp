@@ -1,4 +1,4 @@
-#include "network/udp/UdpClient.hpp"
+#include "network/udp/client.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -9,7 +9,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-namespace network
+namespace network::udp
 {
     UDPClient::UDPClient() : _fd(-1) {}
     UDPClient::~UDPClient()
@@ -118,4 +118,4 @@ namespace network
     {
         return recvfrom(_fd, buffer, len, 0, (struct sockaddr *)NULL, NULL);
     }
-} // ns network
+} // ns network::udp

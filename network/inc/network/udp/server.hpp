@@ -5,8 +5,9 @@
 struct sockaddr_in;
 struct sockaddr;
 
-namespace network
+namespace network::udp
 {
+
 class UDPServer
 {
 public:
@@ -70,4 +71,4 @@ private:
     int _fd;
 };
 
-} // ns network
+} // ns network::udp

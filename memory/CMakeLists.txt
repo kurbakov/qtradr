@@ -1,0 +1,5 @@
+set(LIB_NAME memory)
+file(GLOB_RECURSE LIB_SRC "src/*.cpp")
+add_library(${LIB_NAME} STATIC ${LIB_SRC})
+include_directories(inc/)
+target_include_directories(${LIB_NAME} PUBLIC inc/)

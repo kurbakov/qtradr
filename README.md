@@ -37,14 +37,16 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
 
 - [ ] [Multiplexing](./multiplexing/README.md)
 
-  - [ ] [select vs. poll vs. epoll](./multiplexing/README.md)
-  - [x] [epoll class](./multiplexing/inc/multiplexing/EPoll.hpp)
+  - [ ] [WIP] [select vs. poll vs. epoll](./multiplexing/README.md)
+  - [ ] [WIP] [epoll class](./multiplexing/inc/multiplexing/EPoll.hpp)
   - [ ] io_uring class
 
 - [ ] [Concurrency](./concurrency/REAME.md)
 
-  - [x] [Spinlock](./concurrency/inc/concurrency/Spinlock.hpp)
-  - [ ] Lock free queue (SPSC, MPSC, SPMC)
+  - [x] [Spinlock](./concurrency/inc/concurrency/spinlock.hpp)
+  - [x] [Lock free queue SPSC](./concurrency/inc/concurrency/lfqueue/spsc.hpp)
+  - [ ] Lock free queue MPSC
+  - [ ] Lock free queue SPMC
   - [ ] Lock free stack
   - [ ] POSIX Thread pool with affinity
 

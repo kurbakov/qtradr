@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <string_view>
 
-namespace network
+namespace network::udp
 {
 class UDPClient
 {
@@ -72,4 +72,4 @@ public:
 private:
     int _fd;
 };
-} // ns network
+} // ns network::udp

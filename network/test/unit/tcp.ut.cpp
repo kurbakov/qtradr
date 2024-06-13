@@ -1,5 +1,5 @@
-#include "network/tcp/TcpServer.hpp"
-#include "network/tcp/TcpClient.hpp"
+#include "network/tcp/server.hpp"
+#include "network/tcp/client.hpp"
 
 #include <thread>
 #include <sys/socket.h>
@@ -12,7 +12,7 @@
 
 TEST(TCP, InitServer)
 {
-    network::TCPServer server(98989);
+    network::tcp::TCPServer server(98989);
     EXPECT_EQ(0, server.init());
 
     // once server is initialized, it should fail on repetative init call
@@ -22,7 +22,7 @@ TEST(TCP, InitServer)
 
 TEST(TCP, DeinitServer)
 {
-    network::TCPServer server(98989);
+    network::tcp::TCPServer server(98989);
 
     // we should not fail on deinit before we initialize
     EXPECT_EQ(0, server.deinit());
@@ -34,7 +34,7 @@ TEST(TCP, DeinitServer)
 
 TEST(TCP, InitClient)
 {
-    network::TCPClient client;
+    network::tcp::TCPClient client;
     EXPECT_EQ(0, client.init());
 
     // once server is initialized, it should fail on repetative init call
@@ -43,7 +43,7 @@ TEST(TCP, InitClient)
 
 TEST(TCP, ClientDisconnect)
 {
-    network::TCPClient client;
+    network::tcp::TCPClient client;
 
     // we should not fail on deinit before we initialize
     EXPECT_EQ(0, client.disconnect());
@@ -60,7 +60,7 @@ TEST(TCP, SendRecieve)
         sockaddr_in client_addr;
         char buffer[100];
 
-        network::TCPServer server(98989);
+        network::tcp::TCPServer server(98989);
         server.init();
 
         int client_fd = server.accept(client_addr);
@@ -76,7 +76,7 @@ TEST(TCP, SendRecieve)
         char buffer[100];
         std::string_view message{"Hello Server"};
 
-        network::TCPClient client;
+        network::tcp::TCPClient client;
         client.init();
         client.try_connect_to_ip4("127.0.0.1", 98989);
         client.send_data(message.data(), message.length());
