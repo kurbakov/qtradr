@@ -3,25 +3,13 @@
 #include <atomic>
 #include <unistd.h>
 #include <sys/epoll.h>
+#include <sys/socket.h>
 #include <iostream>
 #include <cstring>
-#include <cstddef>
 
 namespace multiplexing
 {
 
-template <typename Socket>
-concept EpollSocket = requires(Socket sock, int fd, char* buffer, size_t len)
-{
-    // socket has a static method to read data
-    {Socket::read_data(fd, buffer, len)} -> std::same_as<size_t>;
-
-    // socket has method to return file descriptor
-    {sock.get_fd()} -> std::same_as<int>;
-};
-
-
-template <EpollSocket Socket>
 class EPoll
 {
 public:
@@ -29,6 +17,11 @@ public:
 
     ~EPoll()
     {
+        if (_cncfd > 0)
+        {
+            close(_cncfd);
+        }
+
         if (_epollfd > 0)
         {
             close(_epollfd);
@@ -38,9 +31,17 @@ public:
     int init()
     {
         _epollfd = epoll_create1(0);
-        if (_epollfd == -1)
+        if (-1 == _epollfd)
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Failed to create epoll socket" << std::endl;
+            std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
+            return -1;
+        }
+
+        _cncfd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (-1 == _cncfd)
+        {
+            std::cerr << __FILE__ << ":" << __LINE__ << " Failed to create CnC socket for epoll" << std::endl;
             std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
             return -1;
         }
@@ -48,10 +49,9 @@ public:
         return 0;
     }
 
-    int add_sock(uint32_t events, const Socket& sock)
+    int add_sock(uint32_t events, int sock)
     {
-        int fd = sock.get_fd();
-        if(-1 == fd)
+        if(-1 == sock)
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Can't add invalid FD" << std::endl;
             return -1;
@@ -59,9 +59,9 @@ public:
 
         epoll_event event{};
         event.events = events;
-        event.data.fd = fd;
+        event.data.fd = sock;
 
-        if (-1 == epoll_ctl(_epollfd, EPOLL_CTL_ADD, fd, &event))
+        if (-1 == epoll_ctl(_epollfd, EPOLL_CTL_ADD, sock, &event))
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Failed to add socket to epoll" << std::endl;
             std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
@@ -95,8 +95,12 @@ public:
 
             for (int i = 0; i < rcv_ev; ++i)
             {
-                // need to have memory provider where we will read data!
-                Socket::read_data(events[rcv_ev].data.fd, nullptr, 0);
+                if (events[rcv_ev].data.fd == _cncfd) [[unlikely]]
+                {
+                    break;
+                }
+
+                // ToDo: add a handler for the FD event
             }
         }
     }
@@ -104,10 +108,13 @@ public:
     void stop()
     {
         _running.store(false, std::memory_order_acquire);
+        char msg{'S'};
+        write(_cncfd, &msg, sizeof(msg));
     }
 
 private:
     int _epollfd;
+    int _cncfd; // command-and-control fd
     std::atomic_bool _running;
 };
 
