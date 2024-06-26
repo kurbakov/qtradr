@@ -28,7 +28,7 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
 
   - [x] [UDP](./network/inc/network/udp/README.md) Server/Client
   - [x] [TCP](./network/inc/network/tcp/README.md) Server/Client
-  - [ ] multicast
+  - [x] multicast [send](./network/inc/network/udp/mcast_send.hpp)/[recv](./network/inc/network/udp/mcast_recv.hpp)
   - [ ] broadcast
   - [ ] HTTP Client
   - [ ] WebSocket Client
@@ -38,8 +38,8 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
 - [ ] [Multiplexing](./multiplexing/README.md)
 
   - [x] [select vs. poll vs. epoll](./multiplexing/README.md)
-  - [ ] [WIP] [epoll class](./multiplexing/inc/multiplexing/epoll.hpp)
-  - [ ] io_uring class
+  - [x] [epoll](./multiplexing/inc/multiplexing/epoll.hpp)
+  - [ ] io_uring
 
 - [ ] [Concurrency](./concurrency/REAME.md)
 
