@@ -2,7 +2,7 @@
 
 Library uses [mINI](https://github.com/metayeti/mINI) to parse config files.
 
-we expect a collection of configs for fully functional program.
+We expect a collection of configs for fully functional program.
 
 Example of the session config file:
 
@@ -23,4 +23,3 @@ port=443
 host=api.coinbase.com
 port=443
 ```
-

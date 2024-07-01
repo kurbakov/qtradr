@@ -85,8 +85,9 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
   - [ ] unit tests
   - [ ] behave tests
 
-- [ ] Logger
+- [ ] fwk
 
+  - [x] [Config](./fwk/config/README.md)
   - [ ] low latency logger
 
 - [ ] Trading
