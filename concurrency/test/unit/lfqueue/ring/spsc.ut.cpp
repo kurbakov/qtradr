@@ -1,25 +1,24 @@
 #include <gtest/gtest.h>
 
-#include "concurrency/lfqueue/spsc.hpp"
+#include "concurrency/lfqueue/ring/spsc.hpp"
 
-TEST(LFQueueSPSC, construct)
+TEST(LFQueueRingSPSC, construct)
 {
-    EXPECT_NO_THROW(concurrency::QueueSPSC<int*> queue);
+    EXPECT_NO_THROW(concurrency::lfqueue::ring::QueueSPSC<int*> queue);
 }
 
-TEST(LFQueueSPSC, push)
+TEST(LFQueueRingSPSC, push)
 {
-    concurrency::QueueSPSC<int*> queue;
-    EXPECT_FALSE(queue.push(nullptr));
+    concurrency::lfqueue::ring::QueueSPSC<int*> queue;
 
     int* v = new int{0};
     EXPECT_TRUE(queue.push(v));
     delete v;
 }
 
-TEST(LFQueueSPSC, pushAndPop)
+TEST(LFQueueRingSPSC, pushAndPop)
 {
-    concurrency::QueueSPSC<int*> queue;
+    concurrency::lfqueue::ring::QueueSPSC<int*> queue;
     EXPECT_EQ(0, queue.size());
     EXPECT_TRUE(queue.empty());
     EXPECT_FALSE(queue.full());
@@ -40,9 +39,9 @@ TEST(LFQueueSPSC, pushAndPop)
     delete val;
 }
 
-TEST(LFQueueSPSC, full)
+TEST(LFQueueRingSPSC, full)
 {
-    concurrency::QueueSPSC<int*, 8> queue;
+    concurrency::lfqueue::ring::QueueSPSC<int*, 8> queue;
     EXPECT_EQ(8, queue.capacity());
 
     int* val = new int(0);
@@ -59,9 +58,9 @@ TEST(LFQueueSPSC, full)
 }
 
 
-TEST(LFQueueSPSC, TwoThreads)
+TEST(LFQueueRingSPSC, TwoThreads)
 {
-    concurrency::QueueSPSC<int*, 64> queue;
+    concurrency::lfqueue::ring::QueueSPSC<int*, 64> queue;
 
     std::thread consumer ([&queue](){
         int* recv_val = nullptr;

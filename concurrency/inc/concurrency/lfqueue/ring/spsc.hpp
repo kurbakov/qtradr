@@ -2,10 +2,9 @@
 
 #include <array>
 #include <atomic>
-#include <cassert>
-#include <new>
+#include <cstddef>
 
-namespace concurrency
+namespace concurrency::lfqueue::ring
 {
 
 #ifdef __cpp_lib_hardware_interference_size
@@ -17,29 +16,21 @@ constexpr std::size_t hardware_constructive_interference_size = 64;
 constexpr std::size_t hardware_destructive_interference_size = 64;
 #endif
 
-template<typename T>
-concept Pointer = std::is_pointer_v<T>;
-
 /**
  * @brief The lock free queue with single producre and single consumer.
  * Queue is using a ring buffer under the hood. The max number of elements
  * in the queue is limited by size of the ring buffer.
  */
-template<Pointer ObjectPtr, size_t Capacity = 1024>
+template <typename T, size_t Capacity = 1024>
 class QueueSPSC
 {
     /**
-     * Single producer - single consumer pointer queue.
+     * Single producer - single consumer queue.
      * Based on: https://www.youtube.com/watch?v=K3P_Lmq6pw0
      * Code: https://github.com/CharlesFrasch/cppcon2023/tree/main
      * Slides: https://github.com/CppCon/CppCon2023/blob/main/Presentations/SPSC_Lock-free_Wait-Free_Fifo_from_the_Ground_Up_CppCon_2023.pdf
-     *
-     * ToDo:
-     * 1. support objects (not pointers) -> inplace new
      */
 public:
-    using value_type = ObjectPtr;
-
     QueueSPSC() : _push_idx(0), _pop_idx(0), _ring{}
     {
         static_assert(std::atomic_size_t::is_always_lock_free);
@@ -68,13 +59,8 @@ public:
         return size() == capacity();
     }
 
-    bool push(const ObjectPtr& value)
+    bool push(const T& value)
     {
-        if(nullptr == value)
-        {
-            return false;
-        }
-
         size_t push_idx = _push_idx.load(std::memory_order_relaxed);
         if (full(push_idx, _cached_pop_idx))
         {
@@ -91,7 +77,7 @@ public:
         return true;
     }
 
-    bool pop(ObjectPtr& value)
+    bool pop(T& value)
     {
         size_t pop_idx = _pop_idx.load(std::memory_order_relaxed);
 
@@ -119,7 +105,7 @@ private:
     }
 
 private:
-    std::array<ObjectPtr, Capacity> _ring;
+    std::array<T, Capacity> _ring;
 
     alignas(hardware_destructive_interference_size) std::atomic_size_t _push_idx;
     alignas(hardware_destructive_interference_size) std::atomic_size_t _cached_push_idx;
@@ -129,4 +115,4 @@ private:
     char _padding[hardware_destructive_interference_size];
 };
 
-} // ns concurrency
+} // ns concurrency::lfqueue::ring

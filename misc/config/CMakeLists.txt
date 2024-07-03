@@ -19,5 +19,5 @@ target_link_libraries(${UNIT_TEST} PRIVATE
 
 include(GoogleTest)
 gtest_discover_tests(${UNIT_TEST}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/unit/
 )

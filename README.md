@@ -26,10 +26,12 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
 
 - [ ] [Network](./network/README.md)
 
-  - [x] [UDP](./network/inc/network/udp/README.md) Server/Client
-  - [x] [TCP](./network/inc/network/tcp/README.md) Server/Client
-  - [x] multicast [send](./network/inc/network/udp/mcast_send.hpp)/[recv](./network/inc/network/udp/mcast_recv.hpp)
-  - [ ] broadcast
+  - [x] [UDP Server](./network/inc/network/udp/server.hpp)
+  - [x] [UDP Client](./network/inc/network/udp/client.hpp)
+  - [x] [TCP Server](./network/inc/network/tcp/server.hpp)
+  - [x] [TCP Client](./network/inc/network/tcp/client.hpp)
+  - [ ] WIP multicast [send](./network/inc/network/udp/mcast_send.hpp)/[recv](./network/inc/network/udp/mcast_recv.hpp)
+  - [ ] WIP broadcast [send](./network/inc/network/udp/bcast_send.hpp)/[recv](./network/inc/network/udp/bcast_recv.hpp)
   - [ ] HTTP Client
   - [ ] WebSocket Client
   - [ ] RestAPI Client
@@ -38,13 +40,14 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
 - [ ] [Multiplexing](./multiplexing/README.md)
 
   - [x] [select vs. poll vs. epoll](./multiplexing/README.md)
-  - [x] [epoll](./multiplexing/inc/multiplexing/epoll.hpp)
+  - [x] WIP [epoll](./multiplexing/inc/multiplexing/epoll.hpp)
   - [ ] io_uring
 
 - [ ] [Concurrency](./concurrency/REAME.md)
 
   - [x] [Spinlock](./concurrency/inc/concurrency/spinlock.hpp)
-  - [x] [Lock free queue SPSC](./concurrency/inc/concurrency/lfqueue/spsc.hpp)
+  - [x] [Lock free bounded queue SPSC](./concurrency/inc/concurrency/lfqueue/ring/spsc.hpp)
+  - [x] [Lock free unbounded queue SPSC](./concurrency/inc/concurrency/lfqueue/list/spsc.hpp)
   - [ ] Lock free queue MPSC
   - [ ] Lock free queue SPMC
   - [ ] Lock free stack
@@ -85,9 +88,9 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
   - [ ] unit tests
   - [ ] behave tests
 
-- [ ] fwk
+- [ ] misc
 
-  - [x] [Config](./fwk/config/README.md)
+  - [x] [Config](./misc/config/README.md)
   - [ ] low latency logger
 
 - [ ] Trading

@@ -2,7 +2,7 @@
 
 #include <thread>
 
-#include "concurrency/lfqueue/spsc.hpp"
+#include "concurrency/lfqueue/ring/spsc.hpp"
 
 static void pinThread(int cpu) {
     if (cpu < 0) {
@@ -20,9 +20,9 @@ static void pinThread(int cpu) {
 constexpr auto cpu1 = 1;
 constexpr auto cpu2 = 2;
 
-static void BM_QueueSPSC(benchmark::State& state)
+static void BM_LFQueueRingSPSC(benchmark::State& state)
 {
-    concurrency::QueueSPSC<int*> queue;
+    concurrency::lfqueue::ring::QueueSPSC<int*> queue;
 
     auto consumer = std::jthread([&queue](){
         pinThread(cpu1);
@@ -72,4 +72,4 @@ static void BM_QueueSPSC(benchmark::State& state)
     state.counters["ops/sec"] = benchmark::Counter(double(iterations), benchmark::Counter::kIsRate);
 }
 
-BENCHMARK(BM_QueueSPSC);
+BENCHMARK(BM_LFQueueRingSPSC);
