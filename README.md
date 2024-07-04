@@ -47,6 +47,7 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
 
   - [x] [Spinlock](./concurrency/inc/concurrency/spinlock.hpp)
   - [x] [Lock free bounded queue SPSC](./concurrency/inc/concurrency/lfqueue/ring/spsc.hpp)
+  - [x] [Lock free bounded queue MPMC](./concurrency/inc/concurrency/lfqueue/ring/mpmc.hpp)
   - [x] [Lock free unbounded queue SPSC](./concurrency/inc/concurrency/lfqueue/list/spsc.hpp)
   - [ ] Lock free queue MPSC
   - [ ] Lock free queue SPMC
