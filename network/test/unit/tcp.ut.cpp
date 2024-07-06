@@ -1,14 +1,14 @@
-#include "network/tcp/server.hpp"
 #include "network/tcp/client.hpp"
+#include "network/tcp/server.hpp"
 
-#include <thread>
-#include <sys/socket.h>
 #include <gtest/gtest.h>
+#include <sys/socket.h>
+#include <thread>
 
-#include <cstring>
-#include <sys/types.h>
 #include <arpa/inet.h>
+#include <cstring>
 #include <netinet/in.h>
+#include <sys/types.h>
 
 TEST(TCP, InitServer)
 {
@@ -56,36 +56,40 @@ TEST(TCP, ClientDisconnect)
 TEST(TCP, SendRecieve)
 {
     // echo server
-    std::thread server([](){
-        sockaddr_in client_addr;
-        char buffer[100];
+    std::thread server(
+        []()
+        {
+            sockaddr_in client_addr;
+            char buffer[100];
 
-        network::tcp::TCPServer server(98989);
-        server.init();
+            network::tcp::TCPServer tcp_server(98989);
+            tcp_server.init();
 
-        int client_fd = server.accept(client_addr);
-        int rc = server.recv_data(client_fd, buffer, 100);
-        server.send_data(client_fd, buffer, rc);
-    });
+            int client_fd = tcp_server.accept(client_addr);
+            int rc = tcp_server.recv_data(client_fd, buffer, 100);
+            tcp_server.send_data(client_fd, buffer, rc);
+        });
 
     // give some time to start the server
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     // make sure we get response exactly what we sent
-    std::thread client([](){
-        char buffer[100];
-        std::string_view message{"Hello Server"};
+    std::thread client(
+        []()
+        {
+            char buffer[100];
+            std::string_view message{"Hello Server"};
 
-        network::tcp::TCPClient client;
-        client.init();
-        client.try_connect_to_ip4("127.0.0.1", 98989);
-        client.send_data(message.data(), message.length());
+            network::tcp::TCPClient tcp_client;
+            tcp_client.init();
+            tcp_client.try_connect_to_ip4("127.0.0.1", 98989);
+            tcp_client.send_data(message.data(), message.length());
 
-        int rc = client.recv_data(buffer, 100);
-        buffer[rc] = '\0';
+            int rc = tcp_client.recv_data(buffer, 100);
+            buffer[rc] = '\0';
 
-        EXPECT_EQ(0, strncmp(message.data(), buffer, message.length()));
-    });
+            EXPECT_EQ(0, strncmp(message.data(), buffer, message.length()));
+        });
 
     server.join();
     client.join();

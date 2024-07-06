@@ -8,8 +8,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(deps/FindGTest.cmake)
 include(deps/FindBenchmark.cmake)
+include(deps/FindTOMLplusplus.cmake)
 
 enable_testing()
+
+include(cmake/warnings.cmake)
 
 add_subdirectory(network/)
 add_subdirectory(concurrency/)

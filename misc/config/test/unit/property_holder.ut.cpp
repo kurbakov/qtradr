@@ -1,34 +1,34 @@
 #include <string>
 
-#include "config/helper.hpp"
 #include "config/property.hpp"
 #include "config/property_holder.hpp"
+#include "config/toml_parser.hpp"
 
 #include <gtest/gtest.h>
 
 class PropertyHolderFixture
 {
-    const std::string ini_path{"data/example.ini"};
+    const std::string cfg_path{"data/example.cfg"};
 
 public:
     const std::string section{"section"};
     const std::string key_int{"key_int"};
     const std::string key_str{"key_str"};
 
-    config::ConfigHelper cfgHelper;
+    config::TomlParser parser;
 
-    PropertyHolderFixture() : cfgHelper(ini_path) {}
+    PropertyHolderFixture() : parser(cfg_path) {}
 };
 
 TEST(PropertyHolderTest, Foo)
 {
     PropertyHolderFixture fixture;
-    config::PropertyHolder holder(fixture.cfgHelper);
 
-    config::Property<int> int_prop(holder, fixture.section, fixture.key_int);
-    config::Property<std::string> str_prop(holder, fixture.section, fixture.key_str);
+    config::PropertyHolder holder(fixture.parser);
 
-    EXPECT_EQ(2, holder.size());
+    config::Property<int, config::TomlParser> int_prop(fixture.parser, holder, fixture.section, fixture.key_int);
+    config::Property<std::string, config::TomlParser> str_prop(fixture.parser, holder, fixture.section,
+                                                               fixture.key_str);
 
     EXPECT_TRUE(holder.populate());
 

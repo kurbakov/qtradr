@@ -2,26 +2,21 @@
 
 #include <vector>
 
-#include "config/helper.hpp"
-
 namespace config
 {
 
 class IProperty;
+class TomlParser;
 
 class PropertyHolder
 {
 public:
-    explicit PropertyHolder(ConfigHelper &cfgHelper) : _cfgHelper(cfgHelper) {}
-
-    void add_property(IProperty *property) { _properties.push_back(property); }
-
-    [[nodiscard]] size_t size() const { return _properties.size(); }
-
-    [[nodiscard]] bool populate() const;
+    explicit PropertyHolder(TomlParser &parser);
+    void add_property(IProperty *property);
+    bool populate() const;
 
 private:
-    ConfigHelper &_cfgHelper;
+    TomlParser &_parser;
     std::vector<IProperty *> _properties;
 };
 } // namespace config

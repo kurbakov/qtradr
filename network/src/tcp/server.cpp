@@ -1,12 +1,11 @@
 #include "network/tcp/server.hpp"
 
-#include <iostream>
-#include <sys/socket.h>
 #include <cstring>
-#include <netinet/in.h>
 #include <fcntl.h>
+#include <iostream>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #include <unistd.h>
-
 
 namespace network::tcp
 {
@@ -21,12 +20,12 @@ TCPServer::~TCPServer()
     }
 }
 
-
 int TCPServer::init(int backlog)
 {
     if (0 < _fd)
     {
-        std::cerr << __FILE__ << ":" << __LINE__ << " FD is created, please run 'deinit()' to close it before you create a new socket" << std::endl;
+        std::cerr << __FILE__ << ":" << __LINE__
+                  << " FD is created, please run 'deinit()' to close it before you create a new socket" << std::endl;
         return -1;
     }
 
@@ -81,11 +80,10 @@ int TCPServer::deinit()
     return 0;
 }
 
-
-int TCPServer::accept(sockaddr_in& client_addr)
+int TCPServer::accept(sockaddr_in &client_addr)
 {
     socklen_t client_addr_len = sizeof(client_addr);
-    int rc = ::accept(_fd, (sockaddr*) &client_addr, &client_addr_len);
+    int rc = ::accept(_fd, (sockaddr *)&client_addr, &client_addr_len);
 
     if (-1 == rc)
     {
@@ -142,7 +140,7 @@ int TCPServer::send_data(int client_fd, const char *msg, size_t len)
         return 0;
     }
 
-    int completed = 0;
+    size_t completed = 0;
     while (completed < len)
     {
         ssize_t sent = send(client_fd, msg, len, 0);
@@ -160,4 +158,4 @@ int TCPServer::send_data(int client_fd, const char *msg, size_t len)
     return completed;
 }
 
-} // ns network::tcp
+} // namespace network::tcp

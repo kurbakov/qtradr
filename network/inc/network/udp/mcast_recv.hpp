@@ -1,13 +1,13 @@
 #pragma once
 
+#include <arpa/inet.h>
 #include <cerrno>
 #include <cstring>
-#include <sys/socket.h>
 #include <iostream>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <memory.h>
+#include <netinet/in.h>
 #include <string_view>
+#include <sys/socket.h>
 #include <unistd.h>
 
 namespace network
@@ -88,12 +88,13 @@ public:
         }
 
         socklen_t addrlen = sizeof(_addr);
-        return recvfrom(_fd, buff, size, 0, (struct sockaddr *)&_addr, &addrlen);
+        auto *addr = const_cast<sockaddr_in *>(&_addr);
+        return recvfrom(_fd, buff, size, 0, reinterpret_cast<sockaddr *>(addr), &addrlen);
     }
 
 private:
     int _fd;
-    struct sockaddr_in _addr;
+    sockaddr_in _addr;
 };
 
-} // ns network
+} // namespace network
