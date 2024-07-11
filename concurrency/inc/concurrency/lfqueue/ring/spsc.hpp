@@ -2,19 +2,14 @@
 
 #include <array>
 #include <atomic>
+#include <cassert>
 #include <cstddef>
 
 namespace concurrency::lfqueue::ring
 {
 
-#ifdef __cpp_lib_hardware_interference_size
-using std::hardware_constructive_interference_size;
-using std::hardware_destructive_interference_size;
-#else
 // 64 bytes on x86-64 │ L1_CACHE_BYTES │ L1_CACHE_SHIFT │ __cacheline_aligned │ ...
-constexpr std::size_t hardware_constructive_interference_size = 64;
-constexpr std::size_t hardware_destructive_interference_size = 64;
-#endif
+constexpr std::size_t cacheline = 64;
 
 /**
  * @brief The lock free queue with single producre and single consumer.
@@ -104,12 +99,12 @@ private:
     std::array<T, capacity> _ring;
     const size_t _idx_mask;
 
-    alignas(hardware_destructive_interference_size) std::atomic_size_t _push_idx;
-    alignas(hardware_destructive_interference_size) std::atomic_size_t _cached_push_idx;
+    alignas(cacheline) std::atomic_size_t _push_idx;
+    alignas(cacheline) std::atomic_size_t _cached_push_idx;
 
-    alignas(hardware_destructive_interference_size) std::atomic_size_t _pop_idx;
-    alignas(hardware_destructive_interference_size) std::atomic_size_t _cached_pop_idx;
-    char _padding[hardware_destructive_interference_size];
+    alignas(cacheline) std::atomic_size_t _pop_idx;
+    alignas(cacheline) std::atomic_size_t _cached_pop_idx;
+    char _padding[cacheline];
 };
 
 } // namespace concurrency::lfqueue::ring

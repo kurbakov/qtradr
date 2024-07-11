@@ -2,16 +2,11 @@
 
 #include <array>
 #include <atomic>
+#include <cassert>
 #include <cstddef>
 
-#ifdef __cpp_lib_hardware_interference_size
-using std::hardware_constructive_interference_size;
-using std::hardware_destructive_interference_size;
-#else
 // 64 bytes on x86-64 │ L1_CACHE_BYTES │ L1_CACHE_SHIFT │ __cacheline_aligned │ ...
-constexpr std::size_t hardware_constructive_interference_size = 64;
-constexpr std::size_t hardware_destructive_interference_size = 64;
-#endif
+constexpr std::size_t cacheline = 64;
 
 namespace concurrency::lfqueue::ring
 {
@@ -77,7 +72,7 @@ public:
             }
         }
 
-        cell->_data = data;
+        std::construct_at(&cell->_data, data);
         cell->_sequence.store(idx + 1, std::memory_order_release);
 
         return true;
@@ -118,18 +113,18 @@ public:
     }
 
 private:
-    char _pad0[hardware_constructive_interference_size];
+    char _pad0[cacheline];
 
     std::array<cell_t, capacity> _ring;
     const size_t _idx_mask;
 
-    char _pad1[hardware_constructive_interference_size];
+    char _pad1[cacheline];
     std::atomic_size_t _push_idx;
 
-    char _pad2[hardware_constructive_interference_size];
+    char _pad2[cacheline];
     std::atomic_size_t _pop_idx;
 
-    char _pad3[hardware_constructive_interference_size];
+    char _pad3[cacheline];
 };
 
 } // namespace concurrency::lfqueue::ring
