@@ -70,9 +70,9 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
   - [ ] Shared memory
   - [ ] Signal
 
-- [ ] Timers
+- [ ] [Timer](./timer/README.md)
 
-  - [ ] system clock vs CPU time
+  - [x] [clock](./timer/inc/timer/clock.hpp)
   - [ ] watchdog
 
 - [ ] OS (bash script with all linux config related setup)
