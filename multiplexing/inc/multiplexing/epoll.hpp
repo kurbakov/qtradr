@@ -1,11 +1,12 @@
 #pragma once
 
 #include <atomic>
-#include <unistd.h>
+#include <cstring>
+#include <functional>
+#include <iostream>
 #include <sys/epoll.h>
 #include <sys/socket.h>
-#include <iostream>
-#include <cstring>
+#include <unistd.h>
 
 namespace multiplexing
 {
@@ -13,33 +14,33 @@ namespace multiplexing
 class EPoll
 {
 public:
-    EPoll() : _epollfd(-1) {}
+    EPoll() : m_epollfd(-1), m_cncfd(-1), m_running(false), m_context(nullptr), m_callback(nullptr) {}
 
     ~EPoll()
     {
-        if (_cncfd > 0)
+        if (m_cncfd > 0)
         {
-            close(_cncfd);
+            close(m_cncfd);
         }
 
-        if (_epollfd > 0)
+        if (m_epollfd > 0)
         {
-            close(_epollfd);
+            close(m_epollfd);
         }
     }
 
     int init()
     {
-        _epollfd = epoll_create1(0);
-        if (-1 == _epollfd)
+        m_epollfd = epoll_create1(0);
+        if (-1 == m_epollfd)
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Failed to create epoll socket" << std::endl;
             std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
             return -1;
         }
 
-        _cncfd = socket(AF_INET, SOCK_DGRAM, 0);
-        if (-1 == _cncfd)
+        m_cncfd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (-1 == m_cncfd)
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Failed to create CnC socket for epoll" << std::endl;
             std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
@@ -51,7 +52,7 @@ public:
 
     int add_sock(uint32_t events, int sock)
     {
-        if(-1 == sock)
+        if (-1 == sock)
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Can't add invalid FD" << std::endl;
             return -1;
@@ -61,7 +62,7 @@ public:
         event.events = events;
         event.data.fd = sock;
 
-        if (-1 == epoll_ctl(_epollfd, EPOLL_CTL_ADD, sock, &event))
+        if (-1 == epoll_ctl(m_epollfd, EPOLL_CTL_ADD, sock, &event))
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Failed to add socket to epoll" << std::endl;
             std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
@@ -73,19 +74,19 @@ public:
 
     void run()
     {
-        if (_running.load(std::memory_order_release))
+        if (m_running.load(std::memory_order_release))
         {
             return;
         }
 
-        _running.store(true, std::memory_order_acquire);
+        m_running.store(true, std::memory_order_acquire);
 
         constexpr uint8_t max_ev_cnt = 32;
         epoll_event events[max_ev_cnt];
 
-        while (_running.load(std::memory_order_release))
+        while (m_running.load(std::memory_order_release))
         {
-            const int rcv_ev = epoll_wait(_epollfd, events, max_ev_cnt, -1);
+            const int rcv_ev = epoll_wait(m_epollfd, events, max_ev_cnt, -1);
             if (rcv_ev == -1)
             {
                 std::cerr << __FILE__ << ":" << __LINE__ << " Failed to add socket to epoll" << std::endl;
@@ -95,27 +96,48 @@ public:
 
             for (int i = 0; i < rcv_ev; ++i)
             {
-                if (events[rcv_ev].data.fd == _cncfd) [[unlikely]]
+                if (events[i].data.fd == m_cncfd) [[unlikely]]
                 {
                     break;
                 }
 
-                // ToDo: add a handler for the FD event
+                if (nullptr != m_callback) [[likely]]
+                {
+                    (*m_callback)(events[i].events, events[i].data.fd, m_context);
+                }
             }
         }
     }
 
+    void set_context(void *context) { m_context = context; }
+
+    void set_callback(std::function<void(int, int, void *)> *func) { m_callback = func; }
+
     void stop()
     {
-        _running.store(false, std::memory_order_acquire);
+        m_running.store(false, std::memory_order_acquire);
         char msg{'S'};
-        write(_cncfd, &msg, sizeof(msg));
+        write(m_cncfd, &msg, sizeof(msg));
     }
 
 private:
-    int _epollfd;
-    int _cncfd; // command-and-control fd
-    std::atomic_bool _running;
+    // epoll FD
+    int m_epollfd;
+
+    // command-and-control fd
+    int m_cncfd;
+
+    // epoll status
+    std::atomic_bool m_running;
+
+    // context for the callback function
+    void *m_context;
+
+    // callback with following args:
+    // int event = event type
+    // int fd = file descriptor
+    // void* context = context tp pass to the function
+    std::function<void(int, int, void *)> *m_callback;
 };
 
-} // ns multiplexing
+} // namespace multiplexing

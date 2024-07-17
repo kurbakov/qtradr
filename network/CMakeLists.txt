@@ -30,3 +30,16 @@ include(GoogleTest)
 gtest_discover_tests(${UNIT_TEST}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/
 )
+
+
+# Test: Behave
+
+add_executable(mcast_sender
+        test/behave/apps/mcast_sender.cpp
+)
+target_link_libraries(mcast_sender PRIVATE ${LIB_NAME})
+
+add_executable(mcast_receiver
+        test/behave/apps/mcast_receiver.cpp
+)
+target_link_libraries(mcast_receiver PRIVATE ${LIB_NAME})

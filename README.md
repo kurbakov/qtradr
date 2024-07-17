@@ -42,7 +42,7 @@ All benchmark tests in the repo have `*.bt.cpp` extension.
 - [ ] [Multiplexing](./multiplexing/README.md)
 
   - [x] [select vs. poll vs. epoll](./multiplexing/README.md)
-  - [x] WIP [epoll](./multiplexing/inc/multiplexing/epoll.hpp)
+  - [x] [epoll](./multiplexing/inc/multiplexing/epoll.hpp)
   - [ ] io_uring
 
 - [ ] [Concurrency](./concurrency/REAME.md)
