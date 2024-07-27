@@ -1,6 +1,6 @@
 #pragma once
 
-namespace concurrency
+namespace concurrency::lfqueue::list
 {
 #include <assert.h>
 #include <atomic>

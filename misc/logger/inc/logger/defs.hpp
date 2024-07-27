@@ -21,17 +21,15 @@ enum class Level : uint8_t
 
 struct Data
 {
-    using clock = std::chrono::system_clock;
-    using resolution = std::chrono::nanoseconds;
-    using time_point = std::chrono::time_point<clock, resolution>;
-
+    const uint64_t id;
     const std::thread::id thread_id;
-    const time_point timestamp;
+    const timespec timestamp;
     const std::format_args args;
 };
 
 struct Meta
 {
+    const uint64_t id;
     const Level level;
     const std::source_location location;
     const std::string_view pattern;

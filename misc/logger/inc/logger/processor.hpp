@@ -14,49 +14,59 @@ static void *process(void *)
     return nullptr;
 }
 
-template <template <class T, std::size_t> class q> class Processor final
+template <template <typename T> class MPSC_LF_Queue> class Processor final
 {
-    struct Event
+    union Event
     {
-        const Meta _meta;
-        const Data _data;
+        Meta meta;
+        Data data;
     };
 
-    static Processor *_instance;
-    q<Event, 1024> _queue;
-    const Level _level;
+    static Processor *m_instance;
+    static uint64_t m_meta_id;
+    MPSC_LF_Queue<Event> m_queue;
+    const Level m_level;
 
-    pthread_t _consumer_thread;
+    pthread_t m_consumer_thread;
 
-    explicit Processor(Level level) : _queue{}, _level(level)
+    explicit Processor(Level level) : m_queue{}, m_level(level)
     {
-        pthread_create(&_consumer_thread, nullptr, &process, _instance);
+        pthread_create(&m_consumer_thread, nullptr, &process, m_instance);
     }
 
-    ~Processor() { pthread_kill(_consumer_thread, 9); }
+    ~Processor()
+    {
+        pthread_kill(m_consumer_thread, 9);
+        delete m_instance;
+        m_instance = nullptr;
+    }
 
 public:
     Processor(const Processor &obj) = delete;
 
-    [[nodiscard]] Level level() const { return _level; }
+    [[nodiscard]] Level level() const { return m_level; }
 
     static void init(Level level)
     {
-        if (_instance == nullptr)
+        if (m_instance == nullptr)
         {
-            _instance = new Processor(level);
+            m_instance = new Processor(level);
         }
+
     }
 
-    static Processor *get() { return _instance; }
+    static Processor *get() { return m_instance; }
 
-    void write(const Meta &meta, Data &&data)
-    {
-        // this function will be called from producers threads
-        _queue.push({meta, std::move(data)});
-    }
+    uint64_t get_id() { return m_meta_id++; }
+
+    void write(Meta &&) {}
+
+    void write(Data &&) {}
 };
 
-template <template <class T, size_t> class q> Processor<q> *Processor<q>::_instance = nullptr;
+template <template <typename T> class MPSC_LF_Queue>
+Processor<MPSC_LF_Queue> *Processor<MPSC_LF_Queue>::m_instance = nullptr;
+
+template <template <typename T> class MPSC_LF_Queue> uint64_t Processor<MPSC_LF_Queue>::m_meta_id = 0;
 
 } // namespace logger

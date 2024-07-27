@@ -47,7 +47,7 @@ Time in seconds
 inline __attribute__((always_inline)) uint64_t second_time() { return time(nullptr); }
 
 // fastest way to get microseconds
-inline timeval microsecond_time()
+inline __attribute__((always_inline)) timeval microsecond_time()
 {
     timeval tv{};
     gettimeofday(&tv, nullptr);
