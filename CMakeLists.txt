@@ -17,6 +17,7 @@ enable_testing()
 
 include(cmake/warnings.cmake)
 
+add_subdirectory(dsa/)
 add_subdirectory(network/)
 add_subdirectory(concurrency/)
 add_subdirectory(multiplexing/)

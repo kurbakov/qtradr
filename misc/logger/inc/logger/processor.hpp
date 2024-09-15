@@ -2,8 +2,10 @@
 
 #include "defs.hpp"
 
+#include "streams/concepts.hpp"
+#include "streams/cout_stream.hpp"
 #include <cstdint>
-#include <signal.h>
+#include <csignal>
 
 namespace logger
 {
@@ -26,10 +28,11 @@ template <template <typename T> class MPSC_LF_Queue> class Processor final
     static uint64_t m_meta_id;
     MPSC_LF_Queue<Event> m_queue;
     const Level m_level;
+    CoutStream m_stream;
 
     pthread_t m_consumer_thread;
 
-    explicit Processor(Level level) : m_queue{}, m_level(level)
+    explicit Processor(Level level) : m_queue{}, m_level(level), m_stream(), m_consumer_thread()
     {
         pthread_create(&m_consumer_thread, nullptr, &process, m_instance);
     }
@@ -52,16 +55,15 @@ public:
         {
             m_instance = new Processor(level);
         }
-
     }
 
     static Processor *get() { return m_instance; }
 
     uint64_t get_id() { return m_meta_id++; }
 
-    void write(Meta &&) {}
+    void write(Meta &&) { m_stream.write("meta"); }
 
-    void write(Data &&) {}
+    void write(Data &&) { m_stream.write("data"); }
 };
 
 template <template <typename T> class MPSC_LF_Queue>

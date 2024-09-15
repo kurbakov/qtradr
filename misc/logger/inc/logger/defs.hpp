@@ -21,7 +21,7 @@ enum class Level : uint8_t
 
 struct Data
 {
-    const uint64_t id;
+    const uint64_t meta_id;
     const std::thread::id thread_id;
     const timespec timestamp;
     const std::format_args args;

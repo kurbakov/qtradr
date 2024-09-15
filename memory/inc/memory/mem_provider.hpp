@@ -17,7 +17,7 @@ static constexpr size_t GByte = 1024 * MByte;
 /**
  * @brief The MemProvider class
  *
- * Shoul be used to provide big chunks of memory for the custom allocators.
+ * Should be used to provide big chunks of memory for the custom allocators.
  */
 class MemProvider
 {

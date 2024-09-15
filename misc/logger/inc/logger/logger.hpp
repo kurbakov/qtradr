@@ -52,8 +52,8 @@ template <typename Logger, typename... Args> inline void log_data(Logger *logger
             return;                                                                                                    \
         static uint64_t meta_id = logger_ptr->get_id();                                                                \
         static std::once_flag flag;                                                                                    \
-        std::call_once(flag, log_meta<Processor>, logger_ptr, meta_id, logger::Level::DEBUG,                           \
-                       std::source_location::current(), fmt);                                                          \
+        std::call_once(flag, log_meta<Processor>, logger_ptr, meta_id, log_level, std::source_location::current(),     \
+                       fmt);                                                                                           \
         log_data<Processor>(logger_ptr, meta_id, ##__VA_ARGS__);                                                       \
     } while (0)
 
