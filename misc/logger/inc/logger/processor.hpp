@@ -1,74 +1,116 @@
 #pragma once
 
-#include "defs.hpp"
-
-#include "streams/concepts.hpp"
-#include "streams/cout_stream.hpp"
-#include <cstdint>
 #include <csignal>
+#include <vector>
+
+#include "concurrency/spinlock.hpp"
+#include "concurrency/utils.hpp"
+#include "logger/channel.hpp"
+#include "logger/streams/io.hpp"
 
 namespace logger
 {
+void *execute(void *);
 
-static void *process(void *)
+class Processor final
 {
-    // todo
-    return nullptr;
-}
-
-template <template <typename T> class MPSC_LF_Queue> class Processor final
-{
-    union Event
-    {
-        Meta meta;
-        Data data;
-    };
+private:
+    Level m_level;
+    int m_cpu_id;
+    std::vector<Channel *> m_channels;
+    pthread_t m_worker;
+    std::atomic_bool m_running;
+    concurrency::SpinLock m_spinlock;
 
     static Processor *m_instance;
-    static uint64_t m_meta_id;
-    MPSC_LF_Queue<Event> m_queue;
-    const Level m_level;
-    CoutStream m_stream;
 
-    pthread_t m_consumer_thread;
-
-    explicit Processor(Level level) : m_queue{}, m_level(level), m_stream(), m_consumer_thread()
+    Processor(Level level, int cpu_id) : m_level{level}, m_cpu_id{cpu_id}, m_channels{}, m_worker{}, m_running(false)
     {
-        pthread_create(&m_consumer_thread, nullptr, &process, m_instance);
-    }
-
-    ~Processor()
-    {
-        pthread_kill(m_consumer_thread, 9);
-        delete m_instance;
-        m_instance = nullptr;
+        m_channels.reserve(1024);
     }
 
 public:
     Processor(const Processor &obj) = delete;
+    ~Processor()
+    {
+        stop();
+        delete m_instance;
+        m_instance = nullptr;
+    }
 
-    [[nodiscard]] Level level() const { return m_level; }
+    void subscribe(Channel *client, Level &level)
+    {
+        level = m_level;
+        {
+            std::lock_guard<concurrency::SpinLock> guard(m_spinlock);
+            m_channels.push_back(client);
+        }
+    }
 
-    static void init(Level level)
+    void unsubscribe(Channel *client)
+    {
+        for (size_t i = 0; i < m_channels.size(); ++i)
+        {
+            if (m_channels[i] == client)
+            {
+                std::lock_guard<concurrency::SpinLock> guard(m_spinlock);
+                m_channels[i] = m_channels[m_channels.size() - 1];
+                m_channels.pop_back();
+                break;
+            }
+        }
+    }
+
+    static void init(Level level, int cpu_id = -1)
     {
         if (m_instance == nullptr)
         {
-            m_instance = new Processor(level);
+            m_instance = new Processor(level, cpu_id);
         }
+    }
+
+    void start()
+    {
+        m_running = true;
+        pthread_create(&m_worker, nullptr, &execute, (void *)m_instance);
+    }
+
+    void stop()
+    {
+        m_running = false;
+        pthread_kill(m_worker, 9);
     }
 
     static Processor *get() { return m_instance; }
 
-    uint64_t get_id() { return m_meta_id++; }
+    void run()
+    {
+        if (m_cpu_id >= 0)
+        {
+            concurrency::set_cpu_affinity(m_cpu_id);
+        }
 
-    void write(Meta &&) { m_stream.write("meta"); }
-
-    void write(Data &&) { m_stream.write("data"); }
+        Log log{};
+        while (m_running)
+        {
+            std::lock_guard<concurrency::SpinLock> guard(m_spinlock);
+            for (auto *channel : m_channels)
+            {
+                if (!channel->empty() && channel->recv(log))
+                {
+                    stream::IO::process(log);
+                    channel->free(const_cast<Data *>(log.data));
+                }
+            }
+        }
+    }
 };
 
-template <template <typename T> class MPSC_LF_Queue>
-Processor<MPSC_LF_Queue> *Processor<MPSC_LF_Queue>::m_instance = nullptr;
+Processor *Processor::m_instance = nullptr;
 
-template <template <typename T> class MPSC_LF_Queue> uint64_t Processor<MPSC_LF_Queue>::m_meta_id = 0;
-
+void *execute(void *processor)
+{
+    reinterpret_cast<Processor *>(processor)->run();
+    return nullptr;
+}
 } // namespace logger

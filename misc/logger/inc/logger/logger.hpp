@@ -1,66 +1,51 @@
 #pragma once
 
+#include <cstdint>
 #include <format>
-#include <mutex>
 #include <source_location>
-#include <string_view>
 #include <thread>
 
-#include <concurrency/lfqueue/list/mpsc.hpp>
-#include <timer/clock.hpp>
-
-#include "defs.hpp"
-#include "processor.hpp"
-#include "utils.hpp"
+#include "logger/client.hpp"
+#include "logger/defs.hpp"
+#include "logger/processor.hpp"
+#include "logger/utils.hpp"
 
 namespace
 {
+thread_local logger::Client client;
+std::atomic<size_t> uuid{0};
+} // namespace
 
-using Processor = logger::Processor<concurrency::lfqueue::list::mpsc>;
-
-template <typename Logger>
-inline void log_meta(Logger *logger, const uint64_t id, const logger::Level &level,
-                     const std::source_location &source_location, const std::string_view fmt)
+void LOG_INIT(logger::Level level, int cpu_id = -1)
 {
-    logger::Meta meta{
-        .id = id,
-        .level = level,
-        .location = source_location,
-        .pattern = fmt,
-    };
-
-    logger->write(std::move(meta));
+    logger::Processor::init(level, cpu_id);
+    logger::Processor::get()->start();
 }
-
-template <typename Logger, typename... Args> inline void log_data(Logger *logger, uint64_t meta_id, Args &&...args)
-{
-    logger::Data data{
-        .id = meta_id,
-        .thread_id = std::this_thread::get_id(),
-        .timestamp = timer::nanosecond_time(),
-        .args = std::make_format_args(args...),
-    };
-
-    logger->write(std::move(data));
-}
-
-#define LOG_IMPL(log_level, logger_ptr, fmt, ...)                                                                      \
+/**
+ * Raw log: no formatting, split meta information and runtime data
+ *
+ */
+#define LOGR(log_level, fmt, ...)                                                                                      \
     do                                                                                                                 \
     {                                                                                                                  \
         static_assert(logger::placeholders_count(fmt, "{}") == logger::args_count(__VA_ARGS__));                       \
-        if (!logger_ptr || logger_ptr->level() < log_level)                                                            \
-            return;                                                                                                    \
-        static uint64_t meta_id = logger_ptr->get_id();                                                                \
-        static std::once_flag flag;                                                                                    \
-        std::call_once(flag, log_meta<Processor>, logger_ptr, meta_id, log_level, std::source_location::current(),     \
-                       fmt);                                                                                           \
-        log_data<Processor>(logger_ptr, meta_id, ##__VA_ARGS__);                                                       \
+        constexpr static logger::Meta meta{                                                                            \
+            .level = log_level,                                                                                        \
+            .location = std::source_location::current(),                                                               \
+            .pattern = std::string_view{fmt},                                                                          \
+        };                                                                                                             \
+        static size_t log_id = 0;                                                                                      \
+        [[maybe_unused]] static bool once = [&]()                                                                      \
+        {                                                                                                              \
+            log_id = uuid.fetch_add(1, std::memory_order::relaxed);                                                    \
+            process(log_level, log_id, client, &meta);                                                                 \
+            return true;                                                                                               \
+        }();                                                                                                           \
+        process(log_level, log_id, client, ##__VA_ARGS__);                                                             \
     } while (0)
 
-} // namespace
-
-#define LOG_FATAL(fmt, ...) LOG_IMPL(logger::Level::FATAL, Processor::get(), fmt, ##__VA_ARGS__)
-#define LOG_ERROR(fmt, ...) LOG_IMPL(logger::Level::ERROR, Processor::get(), fmt, ##__VA_ARGS__)
-#define LOG_WARN(fmt, ...) LOG_IMPL(logger::Level::WARN, Processor::get(), fmt, ##__VA_ARGS__)
-#define LOG_INFO(fmt, ...) LOG_IMPL(logger::Level::INFO, Processor::get(), fmt, ##__VA_ARGS__)
-#define LOG_DEBUG(fmt, ...) LOG_IMPL(logger::Level::DEBUG, Processor::get(), fmt, ##__VA_ARGS__)
+#define LOGR_DEBUG(fmt, ...) LOGR(logger::Level::DEBUG, fmt, ##__VA_ARGS__)
+#define LOGR_INFO(fmt, ...) LOGR(logger::Level::INFO, fmt, ##__VA_ARGS__)
+#define LOGR_WARN(fmt, ...) LOGR(logger::Level::WARN, fmt, ##__VA_ARGS__)
+#define LOGR_ERROR(fmt, ...) LOGR(logger::Level::ERROR, fmt, ##__VA_ARGS__)
+#define LOGR_FATAL(fmt, ...) LOGR(logger::Level::FATAL, fmt, ##__VA_ARGS__)

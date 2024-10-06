@@ -8,7 +8,6 @@ This repo is a mix of documentation and implementation.
 
 It is a cmake project with dependencies defined in [.cmake](./.cmake/)
 
-
 To build the project:
 
 ```bash
@@ -21,86 +20,85 @@ ctest .
 We also have benchmark tests, build and run it based on the need.
 All benchmark tests in the repo have `*.bt.cpp` extension.
 
-
 ## Plan for coding
 
 - [ ] [Network](./network/README.md)
 
-  - [x] [UDP Server](./network/inc/network/udp/server.hpp)
-  - [x] [UDP Client](./network/inc/network/udp/client.hpp)
-  - [x] [TCP Server](./network/inc/network/tcp/server.hpp)
-  - [x] [TCP Client](./network/inc/network/tcp/client.hpp)
-  - [ ] WIP multicast [send](./network/inc/network/udp/mcast_send.hpp)
-  - [ ] WIP multicast [recv](./network/inc/network/udp/mcast_recv.hpp)
-  - [ ] WIP broadcast [send](./network/inc/network/udp/bcast_send.hpp)
-  - [ ] WIP broadcast [recv](./network/inc/network/udp/bcast_recv.hpp)
-  - [ ] HTTP Client
-  - [ ] WebSocket Client
-  - [ ] RestAPI Client
-  - [ ] Tls (OpenSSL)
+    - [x] [UDP Server](./network/inc/network/udp/server.hpp)
+    - [x] [UDP Client](./network/inc/network/udp/client.hpp)
+    - [x] [TCP Server](./network/inc/network/tcp/server.hpp)
+    - [x] [TCP Client](./network/inc/network/tcp/client.hpp)
+    - [ ] WIP multicast [send](./network/inc/network/udp/mcast_send.hpp)
+    - [ ] WIP multicast [recv](./network/inc/network/udp/mcast_recv.hpp)
+    - [ ] WIP broadcast [send](./network/inc/network/udp/bcast_send.hpp)
+    - [ ] WIP broadcast [recv](./network/inc/network/udp/bcast_recv.hpp)
+    - [ ] HTTP Client
+    - [ ] WebSocket Client
+    - [ ] RestAPI Client
+    - [ ] Tls (OpenSSL)
 
 - [ ] [Multiplexing](./multiplexing/README.md)
 
-  - [x] [select vs. poll vs. epoll](./multiplexing/README.md)
-  - [x] [epoll](./multiplexing/inc/multiplexing/epoll.hpp)
-  - [ ] io_uring
+    - [x] [select vs. poll vs. epoll](./multiplexing/README.md)
+    - [x] [epoll](./multiplexing/inc/multiplexing/epoll.hpp)
+    - [ ] io_uring
 
 - [ ] [Concurrency](./concurrency/REAME.md)
 
-  - [x] [Spinlock](./concurrency/inc/concurrency/spinlock.hpp)
-  - [x] [Lock free bounded queue SPSC](./concurrency/inc/concurrency/lfqueue/ring/spsc.hpp)
-  - [x] [Lock free bounded queue MPMC](./concurrency/inc/concurrency/lfqueue/ring/mpmc.hpp)
-  - [x] [Lock free unbounded queue SPSC](./concurrency/inc/concurrency/lfqueue/list/spsc.hpp)
-  - [ ] Lock free queue MPSC
-  - [ ] Lock free queue SPMC
-  - [x] [Lock free stack SPSC](./concurrency/inc/concurrency/stask_spsc.hpp)
-  - [ ] POSIX Thread pool with affinity
+    - [x] [Spinlock](./concurrency/inc/concurrency/spinlock.hpp)
+    - [x] [Lock free bounded queue SPSC](./concurrency/inc/concurrency/lfqueue/ring/spsc.hpp)
+    - [x] [Lock free bounded queue MPMC](./concurrency/inc/concurrency/lfqueue/ring/mpmc.hpp)
+    - [x] [Lock free unbounded queue SPSC](./concurrency/inc/concurrency/lfqueue/list/spsc.hpp)
+    - [ ] Lock free queue MPSC
+    - [ ] Lock free queue SPMC
+    - [x] [Lock free stack SPSC](./concurrency/inc/concurrency/stask_spsc.hpp)
+    - [ ] POSIX Thread pool with affinity
 
 - [ ] [Memory](./memory/REAME.md)
 
-  - [ ] arena allocator
-  - [ ] stack allocator
-  - [ ] slab allocator
-  - [ ] buddy allocator
-  - [ ] fixed-size blocks allocator
-  - [ ] ...
+    - [ ] arena allocator
+    - [ ] stack allocator
+    - [ ] slab allocator
+    - [ ] buddy allocator
+    - [x] [fixed-size blocks allocator](./memory/inc/memory/fix_size_pool.hpp)
+    - [ ] ...
 
 - [ ] IPC
 
-  - [ ] Shared memory
-  - [ ] Signal
+    - [ ] Shared memory
+    - [ ] Signal
 
 - [ ] [Timer](./timer/README.md)
 
-  - [x] [clock](./timer/inc/timer/clock.hpp)
-  - [ ] watchdog
+    - [x] [clock](./timer/inc/timer/clock.hpp)
+    - [ ] watchdog
 
 - [ ] OS (bash script with all linux config related setup)
 
-  - [ ] CPU isolation
-  - [ ] memory configuration
-  - [ ] CPU set fix clock speed
-  - [ ] ... other OS level optimization
+    - [ ] CPU isolation
+    - [ ] memory configuration
+    - [ ] CPU set fix clock speed
+    - [ ] ... other OS level optimization
 
 - [ ] CI
 
-  - [ ] Latency profile
-  - [ ] Jitter stats
-  - [ ] address sanitiser
-  - [ ] thread sanitiser
-  - [ ] unit tests
-  - [ ] behave tests
+    - [ ] Latency profile
+    - [ ] Jitter stats
+    - [ ] address sanitiser
+    - [ ] thread sanitiser
+    - [ ] unit tests
+    - [ ] behave tests
 
 - [ ] misc
 
-  - [x] [Config](./misc/config/README.md)
-  - [ ] low latency logger
+    - [x] [Config](./misc/config/README.md)
+    - [x] [low latency logger](./misc/logger/README.md)
 
 - [ ] Trading
 
-  - [ ] OrderBook
-  - [ ] Exchange protocol
-    - [ ] Coinbase
+    - [ ] OrderBook
+    - [ ] Exchange protocol
+        - [ ] Coinbase
 
 ## Useful links
 
