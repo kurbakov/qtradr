@@ -12,6 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(deps/FindGTest.cmake)
 include(deps/FindBenchmark.cmake)
 include(deps/FindTOMLplusplus.cmake)
+include(deps/FindOpenSSL.cmake)
 
 enable_testing()
 
