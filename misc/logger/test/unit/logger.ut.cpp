@@ -7,20 +7,20 @@
 
 TEST(Logger, LogData)
 {
-    logger::Processor<std::queue>::init(logger::Level::INFO);
+    LOG_INIT(logger::Level::INFO, -1);
 
-    LOG_FATAL("hello {}", 0);
-    LOG_FATAL("hello");
+    LOGR_FATAL("hello {}", 0);
+    LOGR_FATAL("hello");
 
-    LOG_ERROR("hello {}", 0);
-    LOG_ERROR("hello");
+    LOGR_ERROR("hello {}", 0);
+    LOGR_ERROR("hello");
 
-    LOG_WARN("hello {}", 0);
-    LOG_WARN("hello");
+    LOGR_WARN("hello {}", 0);
+    LOGR_WARN("hello");
 
-    LOG_INFO("hello {}", 0);
-    LOG_INFO("hello");
+    LOGR_INFO("hello {}", 0);
+    LOGR_INFO("hello");
 
-    LOG_DEBUG("hello {}", 0);
-    LOG_DEBUG("hello");
+    LOGR_DEBUG("hello {}", 0);
+    LOGR_DEBUG("hello");
 }
