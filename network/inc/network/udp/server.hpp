@@ -67,8 +67,8 @@ public:
     int send_data(const char *msg, size_t len, sockaddr_in &dest);
 
 private:
-    const int _port;
-    int _fd;
+    const int m_port;
+    int m_fd;
 };
 
-} // ns network::udp
+} // namespace network::udp

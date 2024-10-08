@@ -10,11 +10,11 @@
 namespace network::tcp
 {
 
-TCPServer::TCPServer(int port) : _port(port), _fd(-1) {}
+TCPServer::TCPServer(int port) : m_port(port), m_fd(-1) {}
 
 TCPServer::~TCPServer()
 {
-    if (0 < _fd)
+    if (0 < m_fd)
     {
         deinit();
     }
@@ -22,15 +22,15 @@ TCPServer::~TCPServer()
 
 int TCPServer::init(int backlog)
 {
-    if (0 < _fd)
+    if (0 < m_fd)
     {
         std::cerr << __FILE__ << ":" << __LINE__
                   << " FD is created, please run 'deinit()' to close it before you create a new socket" << std::endl;
         return -1;
     }
 
-    _fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (-1 == _fd)
+    m_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (-1 == m_fd)
     {
         std::cerr << __FILE__ << ":" << __LINE__ << " Failed to create socket" << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
@@ -40,19 +40,19 @@ int TCPServer::init(int backlog)
     sockaddr_in server_addr;
     bzero(&server_addr, sizeof(server_addr));
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_addr.sin_port = htons(_port);
+    server_addr.sin_port = htons(m_port);
     server_addr.sin_family = AF_INET;
 
-    if (-1 == bind(_fd, reinterpret_cast<struct sockaddr *>(&server_addr), sizeof(server_addr)))
+    if (-1 == bind(m_fd, reinterpret_cast<struct sockaddr *>(&server_addr), sizeof(server_addr)))
     {
-        std::cerr << __FILE__ << ":" << __LINE__ << " Failed to bind to the port: " << _port << std::endl;
+        std::cerr << __FILE__ << ":" << __LINE__ << " Failed to bind to the port: " << m_port << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
         return -1;
     }
 
-    if (-1 == listen(_fd, backlog))
+    if (-1 == listen(m_fd, backlog))
     {
-        std::cerr << __FILE__ << ":" << __LINE__ << " Failed to switch to passive socket" << _port << std::endl;
+        std::cerr << __FILE__ << ":" << __LINE__ << " Failed to switch to passive socket" << m_port << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
         return -1;
     }
@@ -62,12 +62,12 @@ int TCPServer::init(int backlog)
 
 int TCPServer::deinit()
 {
-    if (-1 == _fd)
+    if (-1 == m_fd)
     {
         return 0;
     }
 
-    if (-1 == close(_fd))
+    if (-1 == close(m_fd))
     {
         std::cerr << __FILE__ << ":" << __LINE__ << " Failed to close socket" << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
@@ -75,7 +75,7 @@ int TCPServer::deinit()
     }
 
     // socket was successfully closed so we can assign -1 to it
-    _fd = -1;
+    m_fd = -1;
 
     return 0;
 }
@@ -83,11 +83,11 @@ int TCPServer::deinit()
 int TCPServer::accept(sockaddr_in &client_addr)
 {
     socklen_t client_addr_len = sizeof(client_addr);
-    int rc = ::accept(_fd, (sockaddr *)&client_addr, &client_addr_len);
+    int rc = ::accept(m_fd, (sockaddr *)&client_addr, &client_addr_len);
 
     if (-1 == rc)
     {
-        std::cerr << __FILE__ << ":" << __LINE__ << " Failed to accept connection" << _port << std::endl;
+        std::cerr << __FILE__ << ":" << __LINE__ << " Failed to accept connection" << m_port << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
     }
 
@@ -96,7 +96,7 @@ int TCPServer::accept(sockaddr_in &client_addr)
 
 void TCPServer::make_nonblock()
 {
-    if (-1 == fcntl(_fd, F_SETFL, O_NONBLOCK))
+    if (-1 == fcntl(m_fd, F_SETFL, O_NONBLOCK))
     {
         std::cerr << __FILE__ << ":" << __LINE__ << " Failed to set FD as non-blocking" << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;

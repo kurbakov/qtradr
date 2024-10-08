@@ -2,44 +2,39 @@
 
 #include <arpa/inet.h>
 #include <cstddef>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <netdb.h>
+#include <cstring>
 #include <iostream>
 #include <memory.h>
-#include <cstring>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <string_view>
+#include <sys/socket.h>
+#include <unistd.h>
 
-
-namespace network
+namespace network::mcast
 {
 
-class McastSend
+class Sender
 {
 public:
-    McastSend() : _fd{-1}, _addr{}
-    {
-    }
+    Sender() : m_fd{-1}, m_addr{} {}
 
-    ~McastSend()
-    {
-        deinit();
-    }
+    ~Sender() { deinit(); }
 
     int init(int port, std::string_view mcast_group)
     {
-        _fd = socket(AF_INET, SOCK_DGRAM, 0);
-        if (-1 == _fd)
+        m_fd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (-1 == m_fd)
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " Failed to create socket" << std::endl;
             std::cerr << __FILE__ << ":" << __LINE__ << " Message: " << std::strerror(errno) << std::endl;
             return -1;
         }
 
-        memset(&_addr, 0, sizeof(_addr));
-        _addr.sin_family = AF_INET;
-        _addr.sin_addr.s_addr = inet_addr(mcast_group.data());
-        _addr.sin_port = htons(port);
+        memset(&m_addr, 0, sizeof(m_addr));
+        m_addr.sin_family = AF_INET;
+        m_addr.sin_addr.s_addr = inet_addr(mcast_group.data());
+        m_addr.sin_port = htons(port);
 
         return 0;
     }
@@ -47,9 +42,10 @@ public:
     int deinit()
     {
         int rc = 0;
-        if (_fd > 0)
+        if (m_fd > 0)
         {
-            rc = close(_fd);
+            rc = close(m_fd);
+            m_fd = -1;
         }
 
         return rc;
@@ -60,7 +56,7 @@ public:
         int total = 0;
         while (total < size)
         {
-            int nbytes = sendto(_fd, &msg[total], size - total, 0, (struct sockaddr *)&_addr, sizeof(_addr));
+            int nbytes = sendto(m_fd, &msg[total], size - total, 0, (struct sockaddr *)&m_addr, sizeof(m_addr));
             if (nbytes < 0)
             {
                 std::cerr << __FILE__ << ":" << __LINE__ << " Failed to send data" << std::endl;
@@ -75,8 +71,8 @@ public:
     }
 
 private:
-    int _fd;
-    sockaddr_in _addr;
+    int m_fd;
+    sockaddr_in m_addr;
 };
 
-} // ns network
+} // namespace network::mcast

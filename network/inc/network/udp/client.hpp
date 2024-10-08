@@ -70,6 +70,6 @@ public:
     int recv_data(char *buffer, size_t len);
 
 private:
-    int _fd;
+    int m_fd;
 };
-} // ns network::udp
+} // namespace network::udp
