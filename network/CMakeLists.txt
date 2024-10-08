@@ -32,15 +32,8 @@ gtest_discover_tests(${UNIT_TEST}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/
 )
 
-
-# Test: Behave
-
-add_executable(mcast_sender
-        test/behave/apps/mcast_sender.cpp
-)
-target_link_libraries(mcast_sender PRIVATE ${LIB_NAME})
-
-add_executable(mcast_receiver
-        test/behave/apps/mcast_receiver.cpp
-)
-target_link_libraries(mcast_receiver PRIVATE ${LIB_NAME})
+# Tests: Func
+set(FUNC_TLS_TEST ${LIB_NAME}_tls_ft)
+file(GLOB_RECURSE FUNC_TLS_TEST_SRC "test/func/tls.ft.cpp")
+add_executable(${FUNC_TLS_TEST} ${FUNC_TLS_TEST_SRC})
+target_link_libraries(${FUNC_TLS_TEST} PRIVATE ${LIB_NAME})

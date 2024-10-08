@@ -6,11 +6,11 @@ project(QTRADR VERSION 0.0.0)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(OpenSSL REQUIRED)
-
 include(deps/FindGTest.cmake)
 include(deps/FindBenchmark.cmake)
 include(deps/FindTOMLplusplus.cmake)
+
+find_package(OpenSSL "3.3.2" REQUIRED)
 
 enable_testing()
 
